@@ -1,27 +1,69 @@
-# This is the main.yml for installing Elastic Stack for Ubuntu
+---
+    - name: Install prerequisites
+      apt:
+        name:
+          - default-jre
+          - apt-transport-https
+          - curl
+          - software-properties-common
+        state: present
+      become: yes
 
-- name: Install Elasticsearch (Ubuntu)
-  apt:
-    name:
-      - elasticsearch
-      - kibana
-      - logstash
-    state: latest
+    - name: Add Elasticsearch APT repository key
+      apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      become: yes
 
-- name: Elasticsearch Start/Enable Check
-  service:
-    name: elasticsearch
-    state: restarted
-    enabled: true
+    - name: Add Elasticsearch APT repository
+      apt_repository:
+        repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
+        state: present
+      become: yes
 
-- name: Kibana Start/Enable Check
-  service:
-    name: kibana
-    state: restarted
-    enabled: true
+    - name: Install Elasticsearch
+      apt:
+        name: elasticsearch
+        state: present
+      become: yes
 
-- name: Logstash Start/Enable Check
-  service:
-    name: logstash
-    state: restarted
-    enabled: true
+    - name: Enable and start Elasticsearch service
+      systemd:
+        name: elasticsearch
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: Install Kibana
+      apt:
+        name: kibana
+        state: present
+      become: yes
+
+    - name: Enable and start Kibana service
+      systemd:
+        name: kibana
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: Install Logstash
+      apt:
+        name: logstash
+        state: present
+      become: yes
+
+    - name: Enable and start Logstash service
+      systemd:
+        name: logstash
+        enabled: yes
+        state: started
+      become: yes
+
+  handlers:
+    - name: Restart Elasticsearch and Kibana
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - elasticsearch
+        - kibana
