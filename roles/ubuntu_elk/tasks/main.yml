@@ -4,7 +4,6 @@
   apt:
     name:
       - nginx
-      - filebeat
     state: latest
 
 - name: Install Elasticsearch (Ubuntu)
