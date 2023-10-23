@@ -1,11 +1,5 @@
 # This is the main.yml for installing Elastic Stack for Ubuntu
 
-- name: Prerequisites for ELK
-  apt:
-    name:
-      - nginx
-    state: latest
-
 - name: Install Elasticsearch (Ubuntu)
   apt:
     name:
