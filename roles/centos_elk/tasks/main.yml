@@ -64,8 +64,7 @@
         enabled: yes
         state: started
       become: yes
-
-  handlers:
+      
     - name: Restart Elasticsearch and Kibana
       systemd:
         name: "{{ item }}"
